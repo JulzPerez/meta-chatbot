@@ -3,6 +3,7 @@ import logging
 import httpx
 
 from app.config import settings
+from app.services.ai import get_ai_response
 
 logger = logging.getLogger(__name__)
 
@@ -37,4 +38,5 @@ async def handle_whatsapp(client: httpx.AsyncClient, entry: dict) -> None:
         return
 
     logger.info("[whatsapp] from=%s text=%r", phone, text)
-    await send_text(client, phone_number_id, phone, f"You said: {text}")
+    reply = await get_ai_response(user_id=f"wa:{phone}", user_message=text)
+    await send_text(client, phone_number_id, phone, reply)

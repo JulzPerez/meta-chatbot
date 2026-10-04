@@ -3,6 +3,7 @@ import logging
 import httpx
 
 from app.config import settings
+from app.services.ai import get_ai_response
 
 logger = logging.getLogger(__name__)
 
@@ -33,4 +34,5 @@ async def handle_messenger(
         return
 
     logger.info("[%s] sender=%s text=%r", platform, sender_id, text)
-    await send_text(client, sender_id, f"You said: {text}")
+    reply = await get_ai_response(user_id=f"{platform}:{sender_id}", user_message=text)
+    await send_text(client, sender_id, reply)
